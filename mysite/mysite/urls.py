@@ -15,8 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
+from homepage import views as homepage_views
 
 urlpatterns = [
-    url(r'^polls/', include('polls.urls')),
+    url(r'^$', homepage_views.homepage,name='homepage'),
+    url(r'^polls/', include('polls.urls'), name="polls"),
     url(r'^admin/', admin.site.urls),
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
