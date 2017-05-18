@@ -10,5 +10,5 @@ import os # Library used to read files in one folder
 from homepage.models import posts
 
 def homepage(request):
-	filenames = next(os.walk('static\images'))[2]# Acquire filenames for all files under a certain folder
+	filenames = next(os.walk('static/images'))[2]# Acquire filenames for all files under a certain folder
 	return render(request,'index.html',{'filenames':filenames})
