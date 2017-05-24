@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-
+{% load staticfiles %}<!-- Loading Static files, for example: photos-->
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<html lang = "en">
 <html>
 	<head>
 		<title>CAM2 Earthquake</title>
 	</head>
 
 	<body>
-		<p>Sign Up</p>
+		<p>	<a href="polls" class="btn btn-default">Sign up</a></p>
 		<p>Sign In</p>
 		{% block content %}
 		{% endblock %}
