@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% extends "header.html" %}
 {% load staticfiles %}<!-- Loading Static files, for example: photos-->
 {% load bootstrap3 %}
 {% bootstrap_css %}
@@ -21,12 +22,12 @@ HOMEPAGE
 </head>
 
 <body>
-
+{% block content %}
 {% for filename in filenames %}
 <img src="../static/images/{{filename}}" height = 300; width = 300/>
 {% endfor %}
-
-
+<h1> HOMEPAGE </h1>
+{% endblock %}
 
 
 </body>
