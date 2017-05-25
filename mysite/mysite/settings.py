@@ -83,6 +83,8 @@ DATABASES = {
     }
 }
 
+LOGIN_REDIRECT_URL = '../admin'
+
 ACCOUNT_ACTIVATION_DAYS = 7
 
 # Password validation
