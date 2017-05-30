@@ -5,17 +5,36 @@
 {% bootstrap_javascript %}
 {% bootstrap_messages %}
 <html lang = "en">
+<style>
+h1{
+	text-align: right;
+	font-size: 250%;
+}
+h2{
+    font-size: 250%;
+}
+p{
+	text-align: right;
+}
+</style>
 <html>
 	<head>
 		<title>CAM2 Earthquake</title>
-	</head>
+		<h2>Welcome to CAM2 Earthquake</h2>
+		{% if user.is_authenticated %}
+		        <p>Welcome {{ request.user.username }}, you are loged in.......
+		        	<a href="logout" class="btn btn-default">Log out</a>
+		        </p>
 
-	<body>
-		<p>	<a href="polls" class="btn btn-default">Sign up</a></p>
-		<p>Sign In</p>
+		{% else %}
+		<h1>	<a href="polls" class="btn btn-default">Sign up</a>
+				<a href="login" class="btn btn-default">Log in</a>
+		</h1>
+
+		{% endif %}
+
 		{% block content %}
 		{% endblock %}
-	</body>
 
-
+	</head>
 </html>
