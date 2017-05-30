@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends "filterHeader.html" %}
+{% load staticfiles %}<!-- Loading Static files, for example: photos-->
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<html lang = "en"/>
+<html>
+	<h1>In Filter Index</h1>
+
+	<body>
+		{% block content %}
+		<p>	In filter	</p>
+		{% endblock %}
+	</body>
+</html>
+
