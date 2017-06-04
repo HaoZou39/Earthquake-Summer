@@ -12,6 +12,9 @@
 	<body>
 		{% block content %}
 		<p>	In filter	</p>
+			{% for image in object_list %}
+				<h5><a href="/filter/{{image.id}}"> {{ image.caseID }} </a></h5>
+			{% endfor %}
 		{% endblock %}
 	</body>
 </html>

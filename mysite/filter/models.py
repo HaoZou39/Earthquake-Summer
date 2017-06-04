@@ -3,6 +3,17 @@ from django.db import models
 # Create your models here.
 
 class camera(models.Model):
+	caseID = models.CharField(max_length=10) #Some case IDs are longer than 3 digits. Max length of 10 to be safe. Maybe remove this constraint?
+	latitude = models.FloatField()
+	longitude = models.FloatField()
+	priorityIndex = models.FloatField()
+	numFloors = models.PositiveIntegerField(default=0)
+	floorArea_m2 = models.PositiveIntegerField(default=0)
+	totalFloorArea_m2 = models.PositiveIntegerField(default=0)
+
+	def __str__(self):
+		return self.caseID
+"""
 	#id = models.PositiveIntegerField(primary_key=True)
 	camera_key = models.CharField(max_length=200)
 	encrypted_camera_key = models.CharField(max_length=200)
@@ -14,7 +25,7 @@ class camera(models.Model):
 	state = models.CharField(max_length=30)
 	city = models.CharField(max_length=30)
 	resolution_width = models.PositiveSmallIntegerField()
-	resolution_height = models.PositiveSmallIntegerField()
+	resolution_height = models.PositiveSmallIntegerField()mo
 	frame_rate = models.FloatField()
 	is_video = models.BooleanField()
 	is_active = models.BooleanField()          
@@ -49,33 +60,7 @@ class camera(models.Model):
 	local_snapshot_date = models.DateTimeField()
 
 	def __str__(self):
-		return self.title
+		return str(self.camera_key)
+"""
+	
 
-class ip_camera(models.Model):
-	#camera_id = models.PositiveIntegerField()
-	ip = models.CharField(max_length=44)
-	port = models.IntegerField()
-	ip_camera_model_id = models.PositiveIntegerField()
-	last_updated = models.DateTimeField()
-
-	def __str__(self):
-		return self.title
-
-class ip_camera_model(models.Model):
-	#id = models.PositiveIntegerField(primary_key=True)
-	brand = models.CharField(max_length=50)
-	model = models.CharField(max_length=50)
-	video_path = models.CharField(max_length=100)
-	image_path = models.CharField(max_length=100)
-	rtsp_path = models.CharField(max_length=100)
-
-	def __str__(self):
-		return self.title
-
-class non_ip_camera(models.Model):
-	#camera_id = models.PositiveIntegerField()
-	snapshot_url = models.CharField(max_length=200)
-	last_updated = models.DateTimeField()
-
-	def __str__(self):
-		return self.title
