@@ -7,13 +7,29 @@
 {% bootstrap_messages %}
 <html lang = "en"/>
 <html>
-	<h1>In Filter Index</h1>
-
 	<body>
 		{% block content %}
-		<p>	In filter	</p>
-			{% for image in object_list %}
+		<h3>	filter inserted here	</h3>
+			<form>
+			<p>
+				<label>Filter 1</label> 						
+				<select>
+					{% block dropdown %}
+						{% for columnHeader in columnHeaders %}
+							<option>{{ columnHeader }}</option>
+						{% empty %}
+							<option>There are no categories</option>
+						{% endfor %}
+					
+					{% endblock %}	
+				</select> 			
+			</p>
+			</form>
+		<h3>	filter ends here	</h3>
+			{% for image in querysets %}
 				<h5><a href="/filter/{{image.id}}"> {{ image.caseID }} </a></h5>
+			{% empty %}
+				<h5>Sorry, no images match your criteria.</h5>
 			{% endfor %}
 		{% endblock %}
 	</body>

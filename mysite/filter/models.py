@@ -13,6 +13,13 @@ class camera(models.Model):
 
 	def __str__(self):
 		return self.caseID
+
+
+
+
+
+
+
 """
 	#id = models.PositiveIntegerField(primary_key=True)
 	camera_key = models.CharField(max_length=200)
