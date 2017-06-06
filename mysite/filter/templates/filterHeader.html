@@ -23,7 +23,7 @@ p{
 		<h2>Welcome to CAM2 Earthquake</h2>
 		{% if user.is_authenticated %}
 		        <p>Welcome {{ request.user.username }}, you are logged in.......
-		        	<a href="filter" class="btn btn-default"> Proceed to Filter</a>  <a href="logout" class="btn btn-default">Log out</a>
+		        	<a href="../" class="btn btn-default">Homepage</a>  <a href="../logout" class="btn btn-default">Log out</a>
 		        </p>
 
 		{% else %}
@@ -32,9 +32,7 @@ p{
 		</h1>
 
 		{% endif %}
-
 		{% block content %}
 		{% endblock %}
-
 	</head>
 </html>
