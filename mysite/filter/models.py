@@ -9,6 +9,8 @@ class camera(models.Model):
 	numFloors = models.PositiveIntegerField(default=0)
 	floorArea_m2 = models.PositiveIntegerField(default=0)
 	totalFloorArea_m2 = models.PositiveIntegerField(default=0)
+	lastModifiedUser = models.CharField(max_length=140, default="")
+	lastModifiedDate = models.CharField(default=str(datetime.now), max_length=100)
 
 	def __str__(self):
 		return self.caseID

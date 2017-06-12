@@ -45,8 +45,8 @@ def filter(request):
 		exec(var2+'min'+"=min2")
 		exec(var2+'max'+"=max2")
 		exec(var2+'Range'+"= (eval(var2+'min'),eval(var2+'max'))")
-
-		min3 = request.POST.get('min3');
+    
+    min3 = request.POST.get('min3');
 		max3 = request.POST.get('max3');
 		var3 = request.POST.get('filter3');
 		exec(var3+'min'+"=min3")
@@ -55,4 +55,31 @@ def filter(request):
 
 		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders})
-	
+
+def editImage(request, pk):
+	image = get_object_or_404(camera, pk=pk)
+	if request.method == 'POST':
+		form = editForm(request.POST, instance=image)
+		if form.is_valid():
+			image = form.save(commit=False)
+			image.lastModifiedUser = str(request.user)
+			image.lastModifiedDate = str(datetime.now)
+			image.save()
+			return redirect('filter')
+	else:
+		form = editForm(instance=image)
+	return render(request, 'filterEdit.html', {'form':form})
+
+def newImage(request):
+	if request.method == 'POST':
+		form = newForm(request.POST)
+	else:
+		form = newForm()
+	if form.is_valid():
+		image = form.save(commit=False)
+		image.lastModifiedUser = str(request.user)
+		image.lastModifiedDate = str(datetime.now)
+		image.save()
+		return redirect('filter')
+	return render(request, 'filterEdit.html', {'form':form})
+

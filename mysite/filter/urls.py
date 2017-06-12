@@ -1,18 +1,18 @@
 from django.conf.urls import url, include
-+from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView
 from filter.models import camera
 from filter import views as filter_views
 #from . import views
-
-
-
 
 urlpatterns = [
 	url(r'^$', filter_views.filter, name='filter'),
 	url(r'^(?P<pk>\d+)$', DetailView.as_view(model=camera,template_name="image.html"), name='image'),
 	url(r'^(?P<pk>\d+)/edit$', filter_views.editImage, name='editImage'),
 	url(r'^new$', filter_views.newImage, name='newImage'),
- ]
+
+]
+#DetailView.as_view(model=camera,template_name="filterEdit.html")),
+ 
 """
 	url(r'^$', ListView.as_view(
 		queryset=camera.objects.all().order_by("caseID"),
