@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
+from .forms import editForm
 
 # Create your views here.
 def filter(request):
@@ -18,3 +19,6 @@ def filter(request):
 	columnHeaders.pop(0) #do not allow filtering by primary key (which is 'id' column in database)
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders})
 
+def editImage(request, pk):
+	form = editForm(pk=pk)
+	return render(request, 'filterEdit.html', {'form':form})
