@@ -10,12 +10,12 @@
 	<body>
 		{% block content %}
 		<p>HERE</p>
-		{% csrf_token %}
-		<form action="/filter" method="post">
+		<form method="post">
+			{% csrf_token %}
 			<table>
 			{{ form.as_table }}
 			</table>
-			<input type="submit" value="OK">
+			<input type="submit" value="Save">
 		</form>
 		{% endblock %}
 	</body>

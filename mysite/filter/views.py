@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
-from .forms import editForm
+from .forms import editForm, newForm
+from datetime import datetime, timezone
 
 # Create your views here.
 def filter(request):
@@ -20,5 +21,28 @@ def filter(request):
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders})
 
 def editImage(request, pk):
-	form = editForm(pk=pk)
+	image = get_object_or_404(camera, pk=pk)
+	if request.method == 'POST':
+		form = editForm(request.POST, instance=image)
+		if form.is_valid():
+			image = form.save(commit=False)
+			image.lastModifiedUser = str(request.user)
+			image.lastModifiedDate = str(datetime.now)
+			image.save()
+			return redirect('filter')
+	else:
+		form = editForm(instance=image)
+	return render(request, 'filterEdit.html', {'form':form})
+
+def newImage(request):
+	if request.method == 'POST':
+		form = newForm(request.POST)
+	else:
+		form = newForm()
+	if form.is_valid():
+		image = form.save(commit=False)
+		image.lastModifiedUser = str(request.user)
+		image.lastModifiedDate = str(datetime.now)
+		image.save()
+		return redirect('filter')
 	return render(request, 'filterEdit.html', {'form':form})

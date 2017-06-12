@@ -43,6 +43,7 @@
 				</select> 			
 			</div>
 			</form>
+			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a>
 			{% for image in querysets %}
 				<h5><a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a><a href="/filter/{{image.id}}"> {{ image.caseID }} </a></h5>
 			{% empty %}
