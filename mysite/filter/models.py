@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+from datetime import datetime
 
 class camera(models.Model):
 	caseID = models.CharField(max_length=10) #Some case IDs are longer than 3 digits. Max length of 10 to be safe. Maybe remove this constraint?

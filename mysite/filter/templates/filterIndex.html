@@ -65,7 +65,7 @@
 			{% csrf_token %}
 			</form>
 			{% for image in querysets %}
-				<h5><a href="/filter/{{image.id}}"> {{ image.caseID }} </a></h5>
+				<h5><a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a><a href="/filter/{{image.id}}"> {{ image.caseID }} </a></h5>></h5>
 			{% empty %}
 				<h5>Sorry, no images match your criteria.</h5>
 			{% endfor %}

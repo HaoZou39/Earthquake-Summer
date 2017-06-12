@@ -1,6 +1,12 @@
 from django import forms
-form .models import camera
+from filter.models import camera
 
-#class filterDropDown(forms.Form):
-	#filter1 = forms.ModelChoiceField(queryset=camera.objects.all().order_by("caseID"))
+class editForm(forms.ModelForm):
+	class Meta:
+		model = camera
+		fields = ('caseID','latitude','longitude','priorityIndex','numFloors','floorArea_m2','totalFloorArea_m2',)
 
+class newForm(forms.ModelForm):
+	class Meta:
+		model = camera
+		fields = ('caseID','latitude','longitude','priorityIndex','numFloors','floorArea_m2','totalFloorArea_m2',)
