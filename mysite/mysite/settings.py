@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'CAM2Database',
 	'USER': 'root',
-	'PASSWORD': 'Hi110k%eR65&',
+	'PASSWORD': 'password',
 	'HOST': 'localhost',
 	'PORT': '3306',
     }

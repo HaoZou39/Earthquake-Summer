@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
 from .forms import editForm, newForm
-from datetime import datetime, timezone
+from datetime import datetime
 
 # Create your views here.
 def filter(request):
@@ -31,6 +31,7 @@ def filter(request):
 	columnHeaders = list(map(str,columnHeaders))
 	columnHeaders = ['{0}'.format(columnHeader.split('.')[2]) for columnHeader in columnHeaders]
 	columnHeaders.pop(0) #do not allow filtering by primary key (which is 'id' column in database)
+	columnHeaders = columnHeaders[:-2] #do not allow filtering by lastModifiedUser or lastModifiedDate (can be added later)
 	if(request.POST.get('filter')):
 		min1 = request.POST.get('min1');
 		max1 = request.POST.get('max1');
@@ -46,7 +47,7 @@ def filter(request):
 		exec(var2+'max'+"=max2")
 		exec(var2+'Range'+"= (eval(var2+'min'),eval(var2+'max'))")
     
-    min3 = request.POST.get('min3');
+		min3 = request.POST.get('min3');
 		max3 = request.POST.get('max3');
 		var3 = request.POST.get('filter3');
 		exec(var3+'min'+"=min3")
@@ -83,3 +84,7 @@ def newImage(request):
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'form':form})
 
+def deleteImage(request, pk):
+	imageToDelete = camera.objects.get(id=pk)
+	imageToDelete.delete()
+	return HttpResponseRedirect('/filter/')

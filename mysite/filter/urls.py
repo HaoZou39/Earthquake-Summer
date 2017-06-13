@@ -9,7 +9,7 @@ urlpatterns = [
 	url(r'^(?P<pk>\d+)$', DetailView.as_view(model=camera,template_name="image.html"), name='image'),
 	url(r'^(?P<pk>\d+)/edit$', filter_views.editImage, name='editImage'),
 	url(r'^new$', filter_views.newImage, name='newImage'),
-
+	url(r'^(?P<pk>\d+)/delete$', filter_views.deleteImage, name='deleteImage'),
 ]
 #DetailView.as_view(model=camera,template_name="filterEdit.html")),
  
