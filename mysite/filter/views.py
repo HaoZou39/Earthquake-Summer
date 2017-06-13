@@ -46,3 +46,8 @@ def newImage(request):
 		image.save()
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'form':form})
+
+def deleteImage(request, pk):
+	imageToDelete = camera.objects.get(id=pk)
+	imageToDelete.delete()
+	return HttpResponseRedirect('/filter/')
