@@ -60,11 +60,11 @@ def filter(request):
 def editImage(request, pk):
 	image = get_object_or_404(camera, pk=pk)
 	if request.method == 'POST':
-		form = editForm(request.POST, instance=image)
+		form = editForm(request.POST, request.FILES,instance=image)
 		if form.is_valid():
 			image = form.save(commit=False)
 			image.lastModifiedUser = str(request.user)
-			image.lastModifiedDate = str(datetime.now)
+			image.lastModifiedDate = datetime.now
 			image.save()
 			return redirect('filter')
 	else:
@@ -73,13 +73,13 @@ def editImage(request, pk):
 
 def newImage(request):
 	if request.method == 'POST':
-		form = newForm(request.POST)
+		form = newForm(request.POST, request.FILES)
 	else:
 		form = newForm()
 	if form.is_valid():
 		image = form.save(commit=False)
 		image.lastModifiedUser = str(request.user)
-		image.lastModifiedDate = str(datetime.now)
+		image.lastModifiedDate = datetime.now
 		image.save()
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'form':form})
