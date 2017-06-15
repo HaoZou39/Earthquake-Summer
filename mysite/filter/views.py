@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
 from .forms import editForm, newForm
 from datetime import datetime
+import os
 
 # Create your views here.
 def filter(request):
@@ -66,7 +67,16 @@ def editImage(request, pk):
 			image.lastModifiedUser = str(request.user)
 			image.lastModifiedDate = datetime.now
 			image.save()
-			return redirect('filter')
+			for filename in os.listdir("filter/static/images/"):
+				if filename.startswith(pk):
+					deletePhoto(pk)
+					break
+			for filename in os.listdir("filter/static/images"):
+				ext = filename.split('.')
+				if filename.startswith(pk+'_'):
+					os.rename('filter/static/images/'+filename, 'filter/static/images/'+pk+'.'+ext[1])
+					break
+			return redirect('filter')	
 	else:
 		form = editForm(instance=image)
 	return render(request, 'filterEdit.html', {'form':form})
@@ -81,10 +91,22 @@ def newImage(request):
 		image.lastModifiedUser = str(request.user)
 		image.lastModifiedDate = datetime.now
 		image.save()
+		for filename in os.listdir("filter/static/images"):
+			if filename.startswith("DNE"):
+				ext = filename.split('.')
+				os.rename('filter/static/images/'+filename, 'filter/static/images/'+str(image.pk)+'.'+ext[1])
+				break
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'form':form})
 
 def deleteImage(request, pk):
 	imageToDelete = camera.objects.get(id=pk)
+	deletePhoto(pk)
 	imageToDelete.delete()
 	return HttpResponseRedirect('/filter/')
+
+def deletePhoto(pk):
+	for filename in os.listdir("filter/static/images"):
+		if filename.startswith(str(pk)) and '_' not in filename:
+			os.remove('filter/static/images/'+filename)
+
