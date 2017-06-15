@@ -67,6 +67,7 @@ def editImage(request, pk):
 			image.lastModifiedUser = str(request.user)
 			image.lastModifiedDate = datetime.now
 			image.save()
+			imageExists = True
 			for filename in os.listdir("filter/static/images/"):
 				if filename.startswith(pk):
 					deletePhoto(pk)
@@ -79,7 +80,7 @@ def editImage(request, pk):
 			return redirect('filter')	
 	else:
 		form = editForm(instance=image)
-	return render(request, 'filterEdit.html', {'form':form})
+	return render(request, 'filterEdit.html', {'form':form, 'id':pk})
 
 def newImage(request):
 	if request.method == 'POST':
