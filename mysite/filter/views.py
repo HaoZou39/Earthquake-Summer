@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
 from .forms import editForm, newForm
 from datetime import datetime
+import os
 
 # Create your views here.
 def filter(request):
@@ -54,37 +55,58 @@ def filter(request):
 		exec(var3+'max'+"=max3")
 		exec(var3+'Range'+"= (eval(var3+'min'),eval(var3+'max'))")
 
-		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
+		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range,photo=str(id).join('.jpg')).order_by("caseID")
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders})
 
 def editImage(request, pk):
 	image = get_object_or_404(camera, pk=pk)
 	if request.method == 'POST':
-		form = editForm(request.POST, instance=image)
+		form = editForm(request.POST, request.FILES,instance=image)
 		if form.is_valid():
 			image = form.save(commit=False)
 			image.lastModifiedUser = str(request.user)
-			image.lastModifiedDate = str(datetime.now)
+			image.lastModifiedDate = datetime.now
 			image.save()
-			return redirect('filter')
+			for filename in os.listdir("filter/static/images/"):
+				if filename.startswith(pk):
+					deletePhoto(pk)
+					break
+			for filename in os.listdir("filter/static/images"):
+				ext = filename.split('.')
+				if filename.startswith(pk+'_'):
+					os.rename('filter/static/images/'+filename, 'filter/static/images/'+pk+'.'+ext[1])
+					break
+			return redirect('filter')	
 	else:
 		form = editForm(instance=image)
 	return render(request, 'filterEdit.html', {'form':form})
 
 def newImage(request):
 	if request.method == 'POST':
-		form = newForm(request.POST)
+		form = newForm(request.POST, request.FILES)
 	else:
 		form = newForm()
 	if form.is_valid():
 		image = form.save(commit=False)
 		image.lastModifiedUser = str(request.user)
-		image.lastModifiedDate = str(datetime.now)
+		image.lastModifiedDate = datetime.now
 		image.save()
+		for filename in os.listdir("filter/static/images"):
+			if filename.startswith("DNE"):
+				ext = filename.split('.')
+				os.rename('filter/static/images/'+filename, 'filter/static/images/'+str(image.pk)+'.'+ext[1])
+				break
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'form':form})
 
 def deleteImage(request, pk):
 	imageToDelete = camera.objects.get(id=pk)
+	deletePhoto(pk)
 	imageToDelete.delete()
 	return HttpResponseRedirect('/filter/')
+
+def deletePhoto(pk):
+	for filename in os.listdir("filter/static/images"):
+		if filename.startswith(str(pk)) and '_' not in filename:
+			os.remove('filter/static/images/'+filename)
+

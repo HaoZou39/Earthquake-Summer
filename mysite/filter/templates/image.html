@@ -9,6 +9,7 @@
 <html>
 	<body>
 		{% block content %}
+		<div><img src="/static/images/{{camera.id}}.jpg"  width=500 height=500></div>
 			<table style="width:100%">
 				<tr>
 					<th>Case ID</th>
@@ -39,11 +40,11 @@
 					<td>{{camera.totalFloorArea_m2}}</td>
 				</tr>
 				<tr>
-					<td>Last Modified User</td>
+					<td>Last Modified By</td>
 					<td>{{camera.lastModifiedUser}}</td>
 				</tr>
 				<tr>
-					<td>Last Modified At</td>
+					<td>Last Modified On</td>
 					<td>{{camera.lastModifiedDate}}</td>
 				</tr>
 			</table>
