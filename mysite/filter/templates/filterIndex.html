@@ -31,8 +31,12 @@
 						{% empty %}
 							<option>There are no categories</option>
 						{% endfor %}
-					{% endblock %}	
+					{% endblock %}
 				</select> 			
+				Min:
+				<input type = "text" name = "min1" size = 5 value ='-90'>
+				Max:
+				<input type = "text" name = "max1" size = 5 value = '90'>
 				<label>Filter 2</label> 						
 				<select name = 'filter2'>
 					{% block filter2dropdown %}
@@ -43,6 +47,10 @@
 						{% endfor %}
 					{% endblock %}	
 				</select>
+				Min:
+				<input type = "text" name = "min2" size = 5 value ='-90'>
+				Max:
+				<input type = "text" name = "max2" size = 5 value = '90'>
 				<label>Filter 3</label>	
 				<select name = 'filter3'>
 					{% block filter3dropdown %}
@@ -53,30 +61,31 @@
 						{% endfor %}
 					{% endblock %}	
 				</select> 	
-
+				Min:
+				<input type = "text" name = "min3" size = 5 value ='-90'>
+				Max:
+				<input type = "text" name = "max3" size = 5 value = '90'>
 			</div>
-			<div id="range">
-			Min:
-			<input type = "text" name = "min1" size = 5 value ='-90'>
-			Max:
-			<input type = "text" name = "max1" size = 5 value = '90'>
-			Min:
-			<input type = "text" name = "min2" size = 5 value ='-90'>
-			Max:
-			<input type = "text" name = "max2" size = 5 value = '90'>
-			Min:
-			<input type = "text" name = "min3" size = 5 value ='-90'>
-			Max:
-			<input type = "text" name = "max3" size = 5 value = '90'>
-			</div>
+			
 			<div>
 			<input type = "submit" name = "filter" value ="filter">
 			</div>			
 			{% csrf_token %}
 			</form>
 			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a>
+			<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>    <script type="text/javascript">
+       		 	$(function() {
+          		 $("#checkAll").click(function() {
+       		         $('input[class="subBox"]').attr("checked",this.checked); 
+            			});
+            		var $subBox = $("input[class='subBox']");
+            		$subBox.click(function(){
+           		     $("#checkAll").attr("checked",$subBox.length == $("input[name='subBox']:checked").length ? true : false);
+            			});
+        		});
+			</script>
 			{% for image in querysets %}
-				<h5><a><span onclick="deleteImage({{image.id}})"><span class="glyphicon glyphicon-trash"></span></span></a>&nbsp&nbsp&nbsp<a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp<a href="/filter/{{image.id}}"> {{ image.caseID }} </a> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100></h5>
+				<h5><a><span onclick="deleteImage({{image.id}})"><span class="glyphicon glyphicon-trash"></span></span></a>&nbsp&nbsp&nbsp<a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp<a href="/filter/{{image.id}}"> {{ image.caseID }} <li> <input type="checkbox" name="{{filename}}" id="{{filename}}" value="{{filename}}" class="subBox"/> <label for="{{image.id}}"> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100> </label> </li></h5>
 			{% empty %}
 				<h5>Sorry, no images match your criteria.</h5>
 			{% endfor %}
