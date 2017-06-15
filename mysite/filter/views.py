@@ -55,7 +55,7 @@ def filter(request):
 		exec(var3+'max'+"=max3")
 		exec(var3+'Range'+"= (eval(var3+'min'),eval(var3+'max'))")
 
-		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
+		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range,photo=str(id).join('.jpg')).order_by("caseID")
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders})
 
 def editImage(request, pk):
