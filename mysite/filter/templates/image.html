@@ -9,11 +9,12 @@
 <html>
 	<body>
 		{% block content %}
-		<div><img src="/static/images/{{camera.id}}.jpg"  width=500 height=500 alt="image" class="img-responsive center-block"></div>
-			<table style="width:100%">
+		<div><img src="/static/images/{{camera.id}}.jpg" style="max-width:75%; height:auto;" alt="image" class="img-responsive center-block"></div>
+		<div style="text-align:center;"><a href="http://127.0.0.1:8000/static/images/{{camera.id}}.jpg" download="{{camera.id}}.jpg">Download</a></div>
+			<table style="width:100%; text-align:center; margin-top:1cm;">
 				<tr>
-					<th>Case ID</th>
-					<th>{{camera.caseID}}</th>
+					<th style="text-align:center;">Case ID</th>
+					<th style="text-align:center;">{{camera.caseID}}</th>
 				</tr>
 				<tr>
 					<td>Latitude</td>

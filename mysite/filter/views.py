@@ -67,10 +67,9 @@ def editImage(request, pk):
 			image.lastModifiedUser = str(request.user)
 			image.lastModifiedDate = datetime.now
 			image.save()
-			imageExists = True
 			for filename in os.listdir("filter/static/images/"):
 				if filename.startswith(pk):
-					deletePhoto(pk)
+					#deletePhoto(pk)
 					break
 			for filename in os.listdir("filter/static/images"):
 				ext = filename.split('.')

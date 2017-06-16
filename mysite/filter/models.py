@@ -7,11 +7,12 @@ def renameToPrimaryKey(instance, filename):
 	if instance.pk:
 		return 'filter/static/images/'+'{}.{}'.format(instance.pk,ext[1])
 	else:
-		return 'filter/static/images/DNE.' + ext[1]
+		return 'filter/static/images/DNE.' + ext[1].lower()
 
 def validateFile(value):
 	if not value.name.endswith('.jpg'):
-		raise ValidationError(u'Error! Please use .jpg files only!')
+		if not value.name.endswith('.JPG'):
+			raise ValidationError(u'Error! Please use .jpg files only!')
 
 class camera(models.Model):
 	caseID = models.CharField(max_length=10) #Some case IDs are longer than 3 digits. Max length of 10 to be safe. Maybe remove this constraint?

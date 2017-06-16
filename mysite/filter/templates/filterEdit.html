@@ -9,19 +9,13 @@
 <html>
 	<body>
 		{% block content %}
-		<script type="text/javascript">
-		function goBack() {
-			window.history.back()
-		}
-		</script>
 		<form method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 			<table>
 			{{ form.as_table }}
 			</table>
 			<h4>Currently, photo is:</h4>
-			<div><img src="/static/images/{{id}}.jpg"  alt="" width=500 height=500 class="img-responsive center-block"></div>
-			<button onclick="goBack()">Back</button>
+			<div><img src="/static/images/{{id}}.jpg" alt="Image does not exist." width=500 height=500 class="img-responsive center-block"></div>
 			<input type="submit" value="Save">
 		</form>
 		{% endblock %}
