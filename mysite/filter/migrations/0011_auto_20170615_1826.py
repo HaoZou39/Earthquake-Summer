@@ -9,7 +9,7 @@ import filter.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('filter', '0010_auto_20170614_1935'),
+	('filter', '0010_auto_20170614_1935'),
     ]
 
     operations = [
