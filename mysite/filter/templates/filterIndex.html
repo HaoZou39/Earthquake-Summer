@@ -84,14 +84,24 @@
             					});
        				 	});
 			</script>
+			<script>
+				$(document).ready(function(){
+					var $submit = $("#submit_all").hide(),
+					    $cbs = $('input[name="checkboxs"]').click(function(){
+						$submit.toggle( $cbs.is(":checked"));
+					});
+				});
+			</script>
 			{% for image in querysets %}
 				<h5><a><span onclick="deleteImage({{image.id}})"><span class="glyphicon glyphicon-trash"></span></span></a>
 				&nbsp&nbsp&nbsp<a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
 				&nbsp<a href="/filter/{{image.id}}"> {{ image.caseID }} </a>
-				<li> <input type="checkbox" name="{{image.id}}" id="{{image.id}}" value="{{image.id}}" class="subBox"/> <label for="{{image.id}}"> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100> </label> </li></h5>
+				<li> <input type="checkbox" name="checkboxs" id="{{image.id}}" value="{{image.id}}" class="subBox"/> 
+				<label for="{{image.id}}"> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100> </label> </li></h5>
 			{% empty %}
 				<h5>Sorry, no images match your criteria.</h5>
 			{% endfor %}
+			<input type="submit" id="submit_all" value="edit multiple images"/>
 		{% endblock %}
 	</body>
 </html>
