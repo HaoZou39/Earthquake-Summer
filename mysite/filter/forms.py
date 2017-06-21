@@ -18,4 +18,4 @@ class newForm(forms.ModelForm):
 		fields = ('caseID','latitude','longitude','priorityIndex','numFloors','floorArea_m2','totalFloorArea_m2','photo')
 
 class uploadCSVForm(forms.Form):
-	csvFile = forms.FileField(required=False,label="Upload CSV",validators=[validateCSV])
+	csvFile = forms.FileField(required=False,label="",validators=[validateCSV])
