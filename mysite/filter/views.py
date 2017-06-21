@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
-from .forms import editForm, newForm
+from .forms import editForm, newForm, uploadCSVForm
 from datetime import datetime
 import os
 
@@ -56,17 +56,26 @@ def filter(request):
 		exec(var3+'Range'+"= (eval(var3+'min'),eval(var3+'max'))")
 
 		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
-	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders})
+
+	if request.method == 'POST':
+		formCSV = uploadCSVForm(request.POST, request.FILES)
+		if formCSV.is_valid():
+			parseCSV(request.FILES.get('csvFile'))
+			return HttpResponseRedirect('/filter/')
+	else:
+		formCSV = uploadCSVForm()
+	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders, 'CSVform':formCSV})
 
 def editImage(request, pk):
 	image = get_object_or_404(camera, pk=pk)
 	if request.method == 'POST':
-		form = editForm(request.POST, request.FILES,instance=image)
-		if form.is_valid():
-			image = form.save(commit=False)
+		formEdit = editForm(request.POST, request.FILES,instance=image)
+		if formEdit.is_valid():
+			image = formEdit.save(commit=False)
 			image.lastModifiedUser = str(request.user)
 			image.lastModifiedDate = datetime.now
 			image.save()
+
 			for filename in os.listdir("filter/static/images/"):
 				if filename.startswith(pk):
 					#deletePhoto(pk)
@@ -78,16 +87,16 @@ def editImage(request, pk):
 					break
 			return redirect('filter')	
 	else:
-		form = editForm(instance=image)
-	return render(request, 'filterEdit.html', {'form':form, 'id':pk})
+		formEdit = editForm(instance=image)
+	return render(request, 'filterEdit.html', {'formEdit':formEdit, 'id':pk})
 
 def newImage(request):
 	if request.method == 'POST':
-		form = newForm(request.POST, request.FILES)
+		formNew = newForm(request.POST, request.FILES)
 	else:
-		form = newForm()
-	if form.is_valid():
-		image = form.save(commit=False)
+		formNew = newForm()
+	if formNew.is_valid():
+		image = formNew.save(commit=False)
 		image.lastModifiedUser = str(request.user)
 		image.lastModifiedDate = datetime.now
 		image.save()
@@ -97,7 +106,7 @@ def newImage(request):
 				os.rename('filter/static/images/'+filename, 'filter/static/images/'+str(image.pk)+'.'+ext[1])
 				break
 		return redirect('filter')
-	return render(request, 'filterEdit.html', {'form':form})
+	return render(request, 'filterEdit.html', {'formEdit':formNew})
 
 def deleteImage(request, pk):
 	imageToDelete = camera.objects.get(id=pk)
@@ -110,3 +119,9 @@ def deletePhoto(pk):
 		if filename.startswith(str(pk)) and '_' not in filename:
 			os.remove('filter/static/images/'+filename)
 
+def parseCSV(CSVFile):
+	if CSVFile is None:
+		return
+	with open('filter/static/metadata.csv', 'wb+') as destination:
+		for chunk in CSVFile.chunks():
+			destination.write(chunk)
