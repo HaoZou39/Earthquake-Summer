@@ -120,6 +120,8 @@ def deletePhoto(pk):
 			os.remove('filter/static/images/'+filename)
 
 def parseCSV(CSVFile):
+	if CSVFile is None:
+		return
 	with open('filter/static/metadata.csv', 'wb+') as destination:
 		for chunk in CSVFile.chunks():
 			destination.write(chunk)
