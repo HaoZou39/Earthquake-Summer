@@ -57,7 +57,7 @@ def filter(request):
 
 		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
 
-	if request.method == 'POST':
+	if (request.POST.get('Upload')):
 		formCSV = uploadCSVForm(request.POST, request.FILES)
 		if formCSV.is_valid():
 			parseCSV(request.FILES.get('csvFile'))

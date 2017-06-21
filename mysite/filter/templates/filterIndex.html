@@ -87,11 +87,15 @@
 			{% csrf_token %}
 			</form>
 
-      <a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a> <input onclick="showUploadButton()" type="button" value="Upload CSV" id="uploadCSVButton"/>
+     			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a> 
+			<input onclick="showUploadButton()" type="button" value="Upload CSV" id="uploadCSVButton"/>
 			<div style="display:none;" id="uploadButton"><form method="post" enctype="multipart/form-data">
 				{% csrf_token %}
-				{{CSVform.as_ul}} <input type='submit' value='Upload'/>
+				{{CSVform.as_ul}} <input type='submit' value='Upload' name='Upload'/>
 			</form></div>
+			
+			
+			
 			<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>    <script type="text/javascript">
         			$(function() {
            				$("#checkAll").click(function() {
