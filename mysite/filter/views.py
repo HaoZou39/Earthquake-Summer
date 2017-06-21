@@ -60,7 +60,7 @@ def filter(request):
 	if request.method == 'POST':
 		formCSV = uploadCSVForm(request.POST, request.FILES)
 		if formCSV.is_valid():
-			#handle uploaded file
+			parseCSV(request.FILES.get('csvFile'))
 			return HttpResponseRedirect('/filter/')
 	else:
 		formCSV = uploadCSVForm()
@@ -119,5 +119,7 @@ def deletePhoto(pk):
 		if filename.startswith(str(pk)) and '_' not in filename:
 			os.remove('filter/static/images/'+filename)
 
-
-
+def parseCSV(CSVFile):
+	with open('filter/static/metadata.csv', 'wb+') as destination:
+		for chunk in CSVFile.chunks():
+			destination.write(chunk)

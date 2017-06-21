@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 def validateCSV(value):
 	if not value.name.endswith('.csv'):
-		if not value.name.endswith('.csv'):
+		if not value.name.endswith('.CSV'):
 			raise ValidationError(u'Error! Please use .csv files only!')
 
 class editForm(forms.ModelForm):
