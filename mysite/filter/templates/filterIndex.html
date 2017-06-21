@@ -73,7 +73,13 @@
 			{% csrf_token %}
 			</form>
 			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a>
-			<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>    <script type="text/javascript">
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				{{CSVform}}
+				<input type='submit' name='submit' value='Upload'/>
+			</form>
+			<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>    
+			<script type="text/javascript">
        		 	$(function() {
           		 $("#checkAll").click(function() {
        		         $('input[class="subBox"]').attr("checked",this.checked); 
