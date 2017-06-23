@@ -19,62 +19,6 @@
 				}
 			}
 			</script>
-			<form method="POST">
-			{% csrf_token %}
-
-			<div id="filterDropdowns">
-				<label>Filter 1</label> 						
-				<select name = 'filter1'>
-					{% block filter1dropdown %}
-						{% for columnHeader in columnHeaders %}
-							<option>{{ columnHeader }}</option>
-						{% empty %}
-							<option>There are no categories</option>
-						{% endfor %}
-					{% endblock %}
-				</select> 			
-				Min:
-				<input type = "text" name = "min1" size = 5 value ='-90'>
-				Max:
-				<input type = "text" name = "max1" size = 5 value = '90'>
-				<label>Filter 2</label> 						
-				<select name = 'filter2'>
-					{% block filter2dropdown %}
-						{% for columnHeader in columnHeaders %}
-							<option>{{ columnHeader }}</option>
-						{% empty %}
-							<option>There are no categories</option>
-						{% endfor %}
-					{% endblock %}	
-				</select>
-				Min:
-				<input type = "text" name = "min2" size = 5 value ='-90'>
-				Max:
-				<input type = "text" name = "max2" size = 5 value = '90'>
-				<label>Filter 3</label>	
-				<select name = 'filter3'>
-					{% block filter3dropdown %}
-						{% for columnHeader in columnHeaders %}
-							<option>{{ columnHeader }}</option>
-						{% empty %}
-							<option>There are no categories</option>
-						{% endfor %}
-					{% endblock %}	
-				</select> 	
-				Min:
-				<input type = "text" name = "min3" size = 5 value ='-90'>
-				Max:
-				<input type = "text" name = "max3" size = 5 value = '90'>
-			</div>
-			
-			<div style="text-align:center; margin-top:0.6cm; margin-bottom:0.6cm;">
-			<input type = "submit" name = "filter" value ="Filter">
-			</div>			
-			{% csrf_token %}
-			</form>
-
-     			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a>
-			
 			<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>    <script type="text/javascript">
         			$(function() {
            				$("#checkAll").click(function() {
@@ -85,8 +29,6 @@
                				 $("#checkAll").attr("checked",$subBox.length == $("input[name='subBox']:checked").length ? true : false);
             					});
        				 	});
-			</script>
-			<script>
 				$(document).ready(function(){
 					var $submit = $("#submit_all").hide(),
 					    $cbs = $('input[name="checkboxs"]').click(function(){
@@ -94,10 +36,42 @@
 					});
 				});
 			</script>
+			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a>
+			<h4 style="text-align:left">Possible image metadata for this CaseID. For metadata for each image, click on it's ImageID.</h4>
+			<table style="text-align:center; width:80%;">
+				<tr>
+					<th style="text-align:center;">Case ID</th>
+					<th style="text-align:center;">{{firstElement.caseID}}</th>
+				</tr>
+				<tr>
+					<td>Latitude</td>
+					<td>{{firstElement.latitude}}</td>
+				</tr>
+				<tr>
+					<td>Longitude</td>
+					<td>{{firstElement.longitude}}</td>
+				</tr>
+				<tr>
+					<td>Priority Index</td>
+					<td>{{firstElement.priorityIndex}}</td>
+				</tr>
+				<tr>
+					<td>Number of Floors</td>
+					<td>{{firstElement.numFloors}}</td>
+				</tr>
+				<tr>
+					<td>Floor Area (Meters Squared)</td>
+					<td>{{firstElement.floorArea_m2}}</td>
+				</tr>
+				<tr>
+					<td>Total Floor Area (Meters Squared)</td>
+					<td>{{firstElement.totalFloorArea_m2}}</td>
+				</tr>
+			</table>
 			{% for image in querysets %}
 				<h5><a><span onclick="deleteImage({{image.id}})"><span class="glyphicon glyphicon-trash"></span></span></a>
 				&nbsp&nbsp&nbsp<a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
-				&nbsp<a href="/filter/{{image.id}}"> {{ image.caseID }} </a>
+				&nbsp<a href="/filter/{{image.id}}"> {{ image.id }} </a>
 				<li> <input type="checkbox" name="checkboxs" id="{{image.id}}" value="{{image.id}}" class="subBox"/> 
 				<label for="{{image.id}}"> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100> </label> </li></h5>
 			{% empty %}
@@ -105,6 +79,7 @@
 			{% endfor %}
 			<input type="submit" id="submit_all" value="edit multiple images"/>
 		{% endblock %}
+
 	</body>
 </html>
 

@@ -136,5 +136,5 @@ def parseCSV(CSVFile):
 
 def caseIDView(request,caseID):
 	querysets = camera.objects.filter(caseID=caseID)
-	return render(request,'filterCaseIDView.html',{'querysets':querysets})
+	return render(request,'filterCaseIDView.html',{'querysets':querysets, 'firstElement':querysets[0],})
 	pass
