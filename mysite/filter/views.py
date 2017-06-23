@@ -31,8 +31,8 @@ def filter(request):
 	columnHeaders = camera._meta.get_fields()
 	columnHeaders = list(map(str,columnHeaders))
 	columnHeaders = ['{0}'.format(columnHeader.split('.')[2]) for columnHeader in columnHeaders]
-	columnHeaders.pop(0) #do not allow filtering by primary key (which is 'id' column in database)
-	columnHeaders = columnHeaders[:-2] #do not allow filtering by lastModifiedUser or lastModifiedDate (can be added later)
+	#columnHeaders.pop(0) #do not allow filtering by primary key (which is 'id' column in database)
+	columnHeaders = columnHeaders[2:-2] #do not allow filtering by lastModifiedUser or lastModifiedDate (can be added later)
 	if(request.POST.get('filter')):
 		min1 = request.POST.get('min1');
 		max1 = request.POST.get('max1');
@@ -56,7 +56,7 @@ def filter(request):
 		exec(var3+'Range'+"= (eval(var3+'min'),eval(var3+'max'))")
 
 		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
-
+	
 	#remember queryset is ordered by caseID -> objects with same caseID are adjacent to each other
 	i = 0
 	while(i < len(querysets)-1):
@@ -72,7 +72,13 @@ def filter(request):
 			return HttpResponseRedirect('/filter/')
 	else:
 		formCSV = uploadCSVForm()
+
+	if(request.POST.get('search')):
+		keyword = request.POST.get('caseID');
+		querysets=camera.objects.get(caseID__exact=keyword);
+
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders, 'CSVform':formCSV})
+
 
 def editImage(request, pk):
 	image = get_object_or_404(camera, pk=pk)
