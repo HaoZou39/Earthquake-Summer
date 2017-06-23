@@ -1,5 +1,5 @@
 from django.conf.urls import url, include
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView
 from filter.models import camera
 from filter import views as filter_views
 #from . import views
@@ -10,6 +10,7 @@ urlpatterns = [
 	url(r'^(?P<pk>\d+)/edit$', filter_views.editImage, name='editImage'),
 	url(r'^new$', filter_views.newImage, name='newImage'),
 	url(r'^(?P<pk>\d+)/delete$', filter_views.deleteImage, name='deleteImage'),
+	url(r'^(?P<caseID>\w+)$',filter_views.caseIDView,name='caseIDView'),
 ]
 #DetailView.as_view(model=camera,template_name="filterEdit.html")),
  

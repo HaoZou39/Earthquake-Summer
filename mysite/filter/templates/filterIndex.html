@@ -118,7 +118,7 @@
 			{% for image in querysets %}
 				<h5><a><span onclick="deleteImage({{image.id}})"><span class="glyphicon glyphicon-trash"></span></span></a>
 				&nbsp&nbsp&nbsp<a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
-				&nbsp<a href="/filter/{{image.id}}"> {{ image.caseID }} </a>
+				&nbsp<a href="/filter/{{image.caseID}}"> {{ image.caseID }} </a>
 				<li> <input type="checkbox" name="checkboxs" id="{{image.id}}" value="{{image.id}}" class="subBox"/> 
 				<label for="{{image.id}}"> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100> </label> </li></h5>
 			{% empty %}
