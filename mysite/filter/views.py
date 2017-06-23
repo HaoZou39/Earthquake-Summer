@@ -133,3 +133,8 @@ def parseCSV(CSVFile):
 	with open('filter/static/metadata.csv', 'wb+') as destination:
 		for chunk in CSVFile.chunks():
 			destination.write(chunk)
+
+def caseIDView(request,caseID):
+	querysets = camera.objects.filter(caseID=caseID)
+	return render(request,'filterCaseIDView.html',{'querysets':querysets})
+	pass

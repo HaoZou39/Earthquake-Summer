@@ -18,20 +18,6 @@
 					window.location.href = str1.concat(str2,str3);
 				}
 			}
-			function showUploadButton(){
-				var uploadElement = document.getElementById('uploadButton');
-				if(uploadElement.style.display === 'none') {
-					uploadElement.style.display = 'block';
-				} else {
-					uploadElement.style.display = 'none';
-				}
-				var uploadButton = document.getElementById('uploadCSVButton');
-				if(uploadButton.value=="Upload CSV") {
-					uploadButton.value="Cancel CSV Upload";
-				} else {
-					uploadButton.value="Upload CSV";
-				}
-			}
 			</script>
 			<form method="POST">
 			{% csrf_token %}
@@ -87,14 +73,7 @@
 			{% csrf_token %}
 			</form>
 
-     			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a> 
-			<input onclick="showUploadButton()" type="button" value="Upload CSV" id="uploadCSVButton"/>
-			<div style="display:none;" id="uploadButton"><form method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				{{CSVform.as_ul}} <input type='submit' value='Upload' name='Upload'/>
-			</form></div>
-			
-			
+     			<a href="/filter/new"><span class="glyphicon glyphicon-plus"></span> Add New Image </a>
 			
 			<script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>    <script type="text/javascript">
         			$(function() {
@@ -118,7 +97,7 @@
 			{% for image in querysets %}
 				<h5><a><span onclick="deleteImage({{image.id}})"><span class="glyphicon glyphicon-trash"></span></span></a>
 				&nbsp&nbsp&nbsp<a href="/filter/{{image.id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
-				&nbsp<a href="/filter/{{image.caseID}}"> {{ image.caseID }} </a>
+				&nbsp<a href="/filter/{{image.id}}"> {{ image.caseID }} </a>
 				<li> <input type="checkbox" name="checkboxs" id="{{image.id}}" value="{{image.id}}" class="subBox"/> 
 				<label for="{{image.id}}"> <img src="/static/images/{{image.id}}.jpg"  width=100 height=100> </label> </li></h5>
 			{% empty %}
