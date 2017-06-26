@@ -157,4 +157,11 @@ def parseZIP(ZIPFile):
 def caseIDView(request,caseID):
 	querysets = camera.objects.filter(caseID=caseID)
 	return render(request,'filterCaseIDView.html',{'querysets':querysets, 'firstElement':querysets[0],})
-	pass
+
+def deleteAlbum(request, pk):
+	currCaseID = camera.objects.get(id=pk).caseID
+	queryset = camera.objects.filter(caseID=currCaseID)
+	for query in queryset:
+		deletePhoto(query.id) #delete stored file
+		query.delete() #delete database entry
+	return HttpResponseRedirect('/filter/')

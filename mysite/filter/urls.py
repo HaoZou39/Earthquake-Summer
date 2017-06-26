@@ -11,6 +11,7 @@ urlpatterns = [
 	url(r'^new$', filter_views.newImage, name='newImage'),
 	url(r'^(?P<pk>\d+)/delete$', filter_views.deleteImage, name='deleteImage'),
 	url(r'^(?P<caseID>\w+)$',filter_views.caseIDView,name='caseIDView'),
+	url(r'^(?P<pk>\d+)/deleteAlbum$',filter_views.deleteAlbum,name='deleteAlbum'),
 ]
 #DetailView.as_view(model=camera,template_name="filterEdit.html")),
  
