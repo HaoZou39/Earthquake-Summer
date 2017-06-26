@@ -60,7 +60,9 @@ def filter(request):
 	if(request.POST.get('search')):
 		keyword = request.POST.get('caseID');
 		querysets=camera.objects.filter(caseID__exact=keyword);
-
+	if(request.POST.get('search1')):
+		keyword = request.POST.get('lastModifiedUser');
+		querysets=camera.objects.filter(lastModifiedUser__exact=keyword);
 	#remember queryset is ordered by caseID -> objects with same caseID are adjacent to each other
 	i = 0
 	while(i < len(querysets)-1):
