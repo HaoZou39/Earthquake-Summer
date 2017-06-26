@@ -6,6 +6,10 @@ def validateCSV(value):
 	if not value.name.endswith('.csv'):
 		if not value.name.endswith('.CSV'):
 			raise ValidationError(u'Error! Please use .csv files only!')
+def validateZIP(value):
+	if not value.name.endswith('.zip'):
+		if not value.name.endswith('.ZIP'):
+			raise ValidationError(u'Error! Please use .zip files only!')
 
 class editForm(forms.ModelForm):
 	class Meta:
@@ -18,4 +22,5 @@ class newForm(forms.ModelForm):
 		fields = ('caseID','latitude','longitude','priorityIndex','numFloors','floorArea_m2','totalFloorArea_m2','photo')
 
 class uploadCSVForm(forms.Form):
-	csvFile = forms.FileField(required=False,label="",validators=[validateCSV])
+	csvFile = forms.FileField(required=False,label="Upload CSV Here",validators=[validateCSV])
+	imageFiles = forms.FileField(required=False,label="Upload ZIP Here", validators=[validateZIP])

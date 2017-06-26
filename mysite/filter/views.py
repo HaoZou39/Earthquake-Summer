@@ -58,6 +58,7 @@ def filter(request):
 		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
 
 	#remember queryset is ordered by caseID -> objects with same caseID are adjacent to each other
+	#Removing duplicates to show results by album
 	i = 0
 	while(i < len(querysets)-1):
 		currCaseId = querysets[i].caseID
@@ -69,12 +70,14 @@ def filter(request):
 		formCSV = uploadCSVForm(request.POST, request.FILES)
 		if formCSV.is_valid():
 			parseCSV(request.FILES.get('csvFile'))
+			parseZIP(request.FILES.get('imageFiles'))
 			return HttpResponseRedirect('/filter/')
 	else:
 		formCSV = uploadCSVForm()
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders, 'CSVform':formCSV})
 
 def editImage(request, pk):
+	tempCaseID = camera.objects.get(id=pk).caseID
 	image = get_object_or_404(camera, pk=pk)
 	if request.method == 'POST':
 		formEdit = editForm(request.POST, request.FILES,instance=image)
@@ -83,20 +86,17 @@ def editImage(request, pk):
 			image.lastModifiedUser = str(request.user)
 			image.lastModifiedDate = datetime.now
 			image.save()
+			currCaseID = image.caseID
 
-			for filename in os.listdir("filter/static/images/"):
-				if filename.startswith(pk):
-					#deletePhoto(pk)
-					break
-			for filename in os.listdir("filter/static/images"):
+			for filename in os.listdir("filter/static/images/"+str(currCaseID)+'/'):
 				ext = filename.split('.')
 				if filename.startswith(pk+'_'):
-					os.rename('filter/static/images/'+filename, 'filter/static/images/'+pk+'.'+ext[1])
+					os.rename('filter/static/images/'+str(currCaseID)+'/'+filename, 'filter/static/images/'+str(currCaseID)+'/'+pk+'.'+ext[1])
 					break
 			return redirect('filter')	
 	else:
 		formEdit = editForm(instance=image)
-	return render(request, 'filterEdit.html', {'formEdit':formEdit, 'id':pk})
+	return render(request, 'filterEdit.html', {'formEdit':formEdit, 'id':pk, 'caseID':tempCaseID,})
 
 def newImage(request):
 	if request.method == 'POST':
@@ -108,10 +108,16 @@ def newImage(request):
 		image.lastModifiedUser = str(request.user)
 		image.lastModifiedDate = datetime.now
 		image.save()
-		for filename in os.listdir("filter/static/images"):
+		currCaseID = image.caseID
+		
+		#create caseID directory if it doesn't exist		
+		if(not os.path.isdir("filter/static/images/"+str(currCaseID)+'/')):
+			os.makedirs("filter/static/images/"+str(currCaseID)+'/')
+
+		for filename in os.listdir("filter/static/images/"):
 			if filename.startswith("DNE"):
 				ext = filename.split('.')
-				os.rename('filter/static/images/'+filename, 'filter/static/images/'+str(image.pk)+'.'+ext[1])
+				os.rename('filter/static/images/'+filename, 'filter/static/images/'+str(currCaseID)+'/'+str(image.pk)+'.'+ext[1])
 				break
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'formEdit':formNew})
@@ -123,15 +129,29 @@ def deleteImage(request, pk):
 	return HttpResponseRedirect('/filter/')
 
 def deletePhoto(pk):
-	for filename in os.listdir("filter/static/images"):
+	imageToDelete = camera.objects.get(id=pk)
+	currCaseID = imageToDelete.caseID
+	for filename in os.listdir("filter/static/images/"+str(currCaseID)+'/'):
 		if filename.startswith(str(pk)) and '_' not in filename:
-			os.remove('filter/static/images/'+filename)
+			os.remove('filter/static/images/'+str(currCaseID)+'/'+filename)
+	dirContents=os.listdir("filter/static/images/"+str(currCaseID)+'/')
+	if not dirContents:
+		os.rmdir("filter/static/images/"+str(currCaseID)+'/')
 
 def parseCSV(CSVFile):
 	if CSVFile is None:
 		return
+
 	with open('filter/static/metadata.csv', 'wb+') as destination:
 		for chunk in CSVFile.chunks():
+			destination.write(chunk)
+
+def parseZIP(ZIPFile):
+	if ZIPFile is None:
+		return
+
+	with open('filter/static/metadata.zip', 'wb+') as destination:
+		for chunk in ZIPFile.chunks():
 			destination.write(chunk)
 
 def caseIDView(request,caseID):
