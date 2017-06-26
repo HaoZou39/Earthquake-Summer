@@ -32,7 +32,7 @@ def filter(request):
 	columnHeaders = list(map(str,columnHeaders))
 	columnHeaders = ['{0}'.format(columnHeader.split('.')[2]) for columnHeader in columnHeaders]
 	#columnHeaders.pop(0) #do not allow filtering by primary key (which is 'id' column in database)
-	columnHeaders = columnHeaders[2:-2] #do not allow filtering by lastModifiedUser or lastModifiedDate (can be added later)
+	columnHeaders = columnHeaders[2:-3] #do not allow filtering by lastModifiedUser or lastModifiedDate (can be added later)
 	if(request.POST.get('filter')):
 		min1 = request.POST.get('min1');
 		max1 = request.POST.get('max1');
