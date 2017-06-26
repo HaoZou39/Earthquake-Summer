@@ -57,6 +57,10 @@ def filter(request):
 
 		querysets=camera.objects.filter(latitude__range=latitudeRange, longitude__range=longitudeRange, priorityIndex__range=priorityIndexRange, numFloors__range=numFloorsRange, floorArea_m2__range=floorArea_m2Range, totalFloorArea_m2__range=totalFloorArea_m2Range).order_by("caseID")
 	
+	if(request.POST.get('search')):
+		keyword = request.POST.get('caseID');
+		querysets=camera.objects.filter(caseID__exact=keyword);
+
 	#remember queryset is ordered by caseID -> objects with same caseID are adjacent to each other
 	i = 0
 	while(i < len(querysets)-1):
@@ -72,10 +76,6 @@ def filter(request):
 			return HttpResponseRedirect('/filter/')
 	else:
 		formCSV = uploadCSVForm()
-
-	if(request.POST.get('search')):
-		keyword = request.POST.get('caseID');
-		querysets=camera.objects.get(caseID__exact=keyword);
 
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders, 'CSVform':formCSV})
 

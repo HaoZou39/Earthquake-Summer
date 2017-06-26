@@ -9,11 +9,12 @@
 <html>
 	<body>
 		{% block content %}
+{{keyword}}
 			<form method="POST">
 			{% csrf_token %}
 			caseID
-			<input type = "text" name = "caseID" size = 5>
-			<input type="submit" id="search" value="Search"/>	
+			<input type ="text" name = "caseID" size = 5>
+			<input type="submit" name="search" value="Search"/>	
 			{% csrf_token %}
 			</form>
 			<script type="text/javascript">
