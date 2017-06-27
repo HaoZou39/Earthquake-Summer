@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 def renameToPrimaryKey(instance, filename):
 	ext = filename.split('.')
 	if instance.pk:
-		return 'filter/static/images/'+'{}.{}'.format(instance.pk,ext[1])
+		currCaseID = camera.objects.get(id=instance.pk).caseID
+		return 'filter/static/images/'+str(currCaseID)+'/'+'{}.{}'.format(instance.pk,ext[1].lower())
 	else:
 		return 'filter/static/images/DNE.' + ext[1].lower()
 

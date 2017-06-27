@@ -9,8 +9,8 @@
 <html>
 	<body>
 		{% block content %}
-		<div><img src="/static/images/{{camera.id}}.jpg" style="max-width:75%; height:auto;" alt="image" class="img-responsive center-block"></div>
-		<div style="text-align:center;"><a href="http://127.0.0.1:8000/static/images/{{camera.id}}.jpg" download="{{camera.id}}.jpg">Download</a></div>
+		<div><img src="/static/images/{{camera.caseID}}/{{camera.id}}.jpg" style="max-width:75%; height:auto;" alt="image" class="img-responsive center-block"></div>
+		<div style="text-align:center;"><a href="http://127.0.0.1:8000/static/images/{{camera.caseID}}/{{camera.id}}.jpg" download="{{camera.id}}.jpg">Download</a></div>
 			<table style="width:100%; text-align:center; margin-top:1cm;">
 				<tr>
 					<th style="text-align:center;">Case ID</th>
