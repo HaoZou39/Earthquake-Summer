@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
 from .forms import editForm, newForm, uploadCSVForm
 from datetime import datetime
-import os
+import os, zipfile, csv
 
 # Create your views here.
 def filter(request):
@@ -77,13 +77,14 @@ def filter(request):
 		if formCSV.is_valid():
 			parseCSV(request.FILES.get('csvFile'))
 			parseZIP(request.FILES.get('imageFiles'))
+			unZipAndStore(request) #Handle uploaded files
 			return HttpResponseRedirect('/filter/')
 	else:
 		formCSV = uploadCSVForm()
 
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders, 'CSVform':formCSV})
 
-
+#Form to edit image
 def editImage(request, pk):
 	tempCaseID = camera.objects.get(id=pk).caseID
 	image = get_object_or_404(camera, pk=pk)
@@ -93,9 +94,9 @@ def editImage(request, pk):
 			image = formEdit.save(commit=False)
 			image.lastModifiedUser = str(request.user)
 			image.lastModifiedDate = datetime.now
-			image.save()
+			image.save() #Save form to database
 			currCaseID = image.caseID
-
+			#rename form to follow image storage guidelines (image name is it's primaryKey)
 			for filename in os.listdir("filter/static/images/"+str(currCaseID)+'/'):
 				ext = filename.split('.')
 				if filename.startswith(pk+'_'):
@@ -173,3 +174,41 @@ def deleteAlbum(request, pk):
 		deletePhoto(query.id) #delete stored file
 		query.delete() #delete database entry
 	return HttpResponseRedirect('/filter/')
+
+def unZipAndStore(request):
+	#Unzip images and store in images folder
+	zipRef = zipfile.ZipFile("filter/static/metadata.zip",'r')
+	zipRef.extractall("filter/static/images/")
+	zipRef.close()
+	os.remove("filter/static/metadata.zip") #delete zip file as it is not needed anymore
+
+	#Store info in CSV to database
+	with open('filter/static/metadata.csv','r') as f:
+		next(f)
+		reader = csv.reader(f)
+		
+		for row in reader:
+			currCaseID = str(row[2])
+			currLat = float(row[3])
+			currLong = float(row[4])
+			currPriorityIdx = float(row[8])
+			currNumFloors = int(row[5])
+			currFloorArea = int(row[6])
+			currTotalFloorArea = int(row[7])
+			
+			#Add the info to a new form, and save it to the database
+			newCSVImageForm = newForm()
+			newImageForm = newCSVImageForm.save(commit=False)
+			newImageForm.caseID = currCaseID
+			newImageForm.latitude = currLat
+			newImageForm.longitude = currLong
+			newImageForm.priorityIndex = currPriorityIdx
+			newImageForm.numFloors = currNumFloors
+			newImageForm.floorArea_m2 = currFloorArea
+			newImageForm.totalFloorArea_m2 = currTotalFloorArea
+			newImageForm.lastModifiedUser = str(request.user)
+			newImageForm.lastModifiedDate = datetime.now
+			newImageForm.save()
+
+	os.remove("filter/static/metadata.csv") #delete csv file as it is not needed anymore
+
