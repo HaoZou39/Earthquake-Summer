@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
 from .forms import editForm, newForm, uploadCSVForm
 from datetime import datetime
-import os, zipfile, csv
+import os, zipfile, csv, shutil
 
 # Create your views here.
 def filter(request):
@@ -171,17 +171,15 @@ def deleteAlbum(request, pk):
 	currCaseID = camera.objects.get(id=pk).caseID
 	queryset = camera.objects.filter(caseID=currCaseID)
 	for query in queryset:
-		deletePhoto(query.id) #delete stored file
+		try:
+			deletePhoto(query.id) #delete stored file
+		except FileNotFoundError:
+			print("Image was not found.")
+			pass
 		query.delete() #delete database entry
 	return HttpResponseRedirect('/filter/')
 
 def unZipAndStore(request):
-	#Unzip images and store in images folder
-	zipRef = zipfile.ZipFile("filter/static/metadata.zip",'r')
-	zipRef.extractall("filter/static/images/")
-	zipRef.close()
-	os.remove("filter/static/metadata.zip") #delete zip file as it is not needed anymore
-
 	#Store info in CSV to database
 	with open('filter/static/metadata.csv','r') as f:
 		next(f)
@@ -212,3 +210,21 @@ def unZipAndStore(request):
 
 	os.remove("filter/static/metadata.csv") #delete csv file as it is not needed anymore
 
+	#Unzip images and store in images folder
+	zipRef = zipfile.ZipFile("filter/static/metadata.zip",'r')
+	zipRef.extractall("filter/static/") #extract to folder
+	zipRef.close()
+	os.remove("filter/static/metadata.zip") #delete zip file as it is not needed anymore
+	latestID = (camera.objects.all().order_by("-id")[0]).id
+	latestID+=1
+	print(latestID)
+	for path,dirs,files in os.walk("filter/static"):
+		for file in files:
+			ext = str(file).split('.')
+			os.rename(path+'/'+str(file),path+'/'+str(latestID)+'.'+str(ext[1]))
+			latestID += 1
+	folders = next(os.walk("filter/static/"))[1]
+	folders.remove('images')
+	for folder in folders:
+		shutil.move("filter/static/"+str(folder)+'/',"filter/static/images/")
+	
