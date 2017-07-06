@@ -179,13 +179,39 @@ def deleteAlbum(request, pk):
 		query.delete() #delete database entry
 	return HttpResponseRedirect('/filter/')
 
+#This function creates a new database entry, gets its id, and then deletes it. This is only done in order to get the latest primary key in the database
+def getLatestID():
+	newCSVImageForm = newForm()
+	newImageForm = newCSVImageForm.save(commit=False)
+	newImageForm.caseID = 'TEST'
+	newImageForm.latitude = 0.0000
+	newImageForm.longitude = 0.0000
+	newImageForm.priorityIndex = 0.0000
+	newImageForm.numFloors = 0
+	newImageForm.floorArea_m2 = 0
+	newImageForm.totalFloorArea_m2 = 0
+	newImageForm.lastModifiedUser = 'TESTUSER'
+	newImageForm.lastModifiedDate = datetime.now
+	newImageForm.save()
+	currID = newImageForm.id
+	newImageForm.delete()
+	return currID
+
 def unZipAndStore(request):
+	#Unzip images and store in images folder
+	zipRef = zipfile.ZipFile("filter/static/metadata.zip",'r')
+	zipRef.extractall("filter/static/") #extract to static folder
+	zipRef.close()
+	os.remove("filter/static/metadata.zip") #delete zip file as it is not needed anymore		
+	latestID = getLatestID() + 1 #int(camera.objects.latest('id')) + 1 #len(camera.objects.all()) + 1
+
 	#Store info in CSV to database
 	with open('filter/static/metadata.csv','r') as f:
 		next(f)
 		reader = csv.reader(f)
 		
 		for row in reader:
+			#Extract metadata from CSV
 			currCaseID = str(row[2])
 			currLat = float(row[3])
 			currLong = float(row[4])
@@ -193,36 +219,32 @@ def unZipAndStore(request):
 			currNumFloors = int(row[5])
 			currFloorArea = int(row[6])
 			currTotalFloorArea = int(row[7])
-			
-			#Add the info to a new form, and save it to the database
-			newCSVImageForm = newForm()
-			newImageForm = newCSVImageForm.save(commit=False)
-			newImageForm.caseID = currCaseID
-			newImageForm.latitude = currLat
-			newImageForm.longitude = currLong
-			newImageForm.priorityIndex = currPriorityIdx
-			newImageForm.numFloors = currNumFloors
-			newImageForm.floorArea_m2 = currFloorArea
-			newImageForm.totalFloorArea_m2 = currTotalFloorArea
-			newImageForm.lastModifiedUser = str(request.user)
-			newImageForm.lastModifiedDate = datetime.now
-			newImageForm.save()
+
+			currFolder = 'filter/static/'+currCaseID+'/' #Get the current folder
+
+			#Rename files in that folder
+			for files in os.listdir(currFolder):
+				ext = str(files).split('.')
+				os.rename('filter/static/'+currCaseID+'/'+str(files),'filter/static/'+currCaseID+'/'+str(latestID)+'.'+str(ext[1]))
+				latestID += 1
+
+				#Add the metadata to a new form, and save it to the database
+				newCSVImageForm = newForm()
+				newImageForm = newCSVImageForm.save(commit=False)
+				newImageForm.caseID = currCaseID
+				newImageForm.latitude = currLat
+				newImageForm.longitude = currLong
+				newImageForm.priorityIndex = currPriorityIdx
+				newImageForm.numFloors = currNumFloors
+				newImageForm.floorArea_m2 = currFloorArea
+				newImageForm.totalFloorArea_m2 = currTotalFloorArea
+				newImageForm.lastModifiedUser = str(request.user)
+				newImageForm.lastModifiedDate = datetime.now
+				newImageForm.save()
 
 	os.remove("filter/static/metadata.csv") #delete csv file as it is not needed anymore
 
-	#Unzip images and store in images folder
-	zipRef = zipfile.ZipFile("filter/static/metadata.zip",'r')
-	zipRef.extractall("filter/static/") #extract to folder
-	zipRef.close()
-	os.remove("filter/static/metadata.zip") #delete zip file as it is not needed anymore
-	latestID = (camera.objects.all().order_by("-id")[0]).id
-	latestID+=1
-	print(latestID)
-	for path,dirs,files in os.walk("filter/static"):
-		for file in files:
-			ext = str(file).split('.')
-			os.rename(path+'/'+str(file),path+'/'+str(latestID)+'.'+str(ext[1]))
-			latestID += 1
+	#Move folders into images
 	folders = next(os.walk("filter/static/"))[1]
 	folders.remove('images')
 	for folder in folders:
