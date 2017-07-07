@@ -5,7 +5,7 @@ from .forms import editForm, newForm, uploadCSVForm
 from datetime import datetime
 import os, zipfile, csv, shutil
 
-# Create your views here.
+#This function helps filter the database according to given constraints
 def filter(request):
 	#Establishing filter constraints
 	pImin = 0;
@@ -84,7 +84,7 @@ def filter(request):
 
 	return render(request, 'filterIndex.html', {'querysets':querysets,'columnHeaders':columnHeaders, 'CSVform':formCSV})
 
-#Form to edit image
+#This function assists in editing photos already in the database
 def editImage(request, pk):
 	tempCaseID = camera.objects.get(id=pk).caseID
 	image = get_object_or_404(camera, pk=pk)
@@ -107,6 +107,7 @@ def editImage(request, pk):
 		formEdit = editForm(instance=image)
 	return render(request, 'filterEdit.html', {'formEdit':formEdit, 'id':pk, 'caseID':tempCaseID,})
 
+#This function assists in adding a new photo to the database
 def newImage(request):
 	if request.method == 'POST':
 		formNew = newForm(request.POST, request.FILES)
@@ -131,12 +132,14 @@ def newImage(request):
 		return redirect('filter')
 	return render(request, 'filterEdit.html', {'formEdit':formNew})
 
+#This function deletes the database entry for a photo
 def deleteImage(request, pk):
 	imageToDelete = camera.objects.get(id=pk)
 	deletePhoto(pk)
 	imageToDelete.delete()
 	return HttpResponseRedirect('/filter/')
 
+#This function deletes the actual photo stores in the /static/images/ folder
 def deletePhoto(pk):
 	imageToDelete = camera.objects.get(id=pk)
 	currCaseID = imageToDelete.caseID
@@ -147,6 +150,7 @@ def deletePhoto(pk):
 	if not dirContents:
 		os.rmdir("filter/static/images/"+str(currCaseID)+'/')
 
+#This function moves the csv file from memory to /filter/static/ and renames it to metadata.csv
 def parseCSV(CSVFile):
 	if CSVFile is None:
 		return
@@ -155,6 +159,7 @@ def parseCSV(CSVFile):
 		for chunk in CSVFile.chunks():
 			destination.write(chunk)
 
+#This function moves the zip file from memory to /filter/static/ and renames it to metadata.zip
 def parseZIP(ZIPFile):
 	if ZIPFile is None:
 		return
@@ -163,10 +168,12 @@ def parseZIP(ZIPFile):
 		for chunk in ZIPFile.chunks():
 			destination.write(chunk)
 
+#This function helps with viewing all images matching a given caseID
 def caseIDView(request,caseID):
 	querysets = camera.objects.filter(caseID=caseID)
 	return render(request,'filterCaseIDView.html',{'querysets':querysets, 'firstElement':querysets[0],})
 
+#This function deletes a whole album of images (both physically stored file and database entry)
 def deleteAlbum(request, pk):
 	currCaseID = camera.objects.get(id=pk).caseID
 	queryset = camera.objects.filter(caseID=currCaseID)
@@ -179,7 +186,8 @@ def deleteAlbum(request, pk):
 		query.delete() #delete database entry
 	return HttpResponseRedirect('/filter/')
 
-#This function creates a new database entry, gets its id, and then deletes it. This is only done in order to get the latest primary key in the database
+#This function creates a new database entry, gets its id, and then deletes it.
+#This is only done in order to get the latest primary key in the database
 def getLatestID():
 	newCSVImageForm = newForm()
 	newImageForm = newCSVImageForm.save(commit=False)
@@ -197,13 +205,14 @@ def getLatestID():
 	newImageForm.delete()
 	return currID
 
+#This function processes the uploaded csv/zip file, adds them to the database, properly renames the images, and then promptly deletes the csv/zip files
 def unZipAndStore(request):
 	#Unzip images and store in images folder
 	zipRef = zipfile.ZipFile("filter/static/metadata.zip",'r')
 	zipRef.extractall("filter/static/") #extract to static folder
 	zipRef.close()
 	os.remove("filter/static/metadata.zip") #delete zip file as it is not needed anymore		
-	latestID = getLatestID() + 1 #int(camera.objects.latest('id')) + 1 #len(camera.objects.all()) + 1
+	latestID = getLatestID() + 1
 
 	#Store info in CSV to database
 	with open('filter/static/metadata.csv','r') as f:
@@ -222,7 +231,7 @@ def unZipAndStore(request):
 
 			currFolder = 'filter/static/'+currCaseID+'/' #Get the current folder
 
-			#Rename files in that folder
+			#Rename files in that folder and add them to the database
 			for files in os.listdir(currFolder):
 				ext = str(files).split('.')
 				os.rename('filter/static/'+currCaseID+'/'+str(files),'filter/static/'+currCaseID+'/'+str(latestID)+'.'+str(ext[1]))
@@ -244,7 +253,7 @@ def unZipAndStore(request):
 
 	os.remove("filter/static/metadata.csv") #delete csv file as it is not needed anymore
 
-	#Move folders into images
+	#Move folders into images folder
 	folders = next(os.walk("filter/static/"))[1]
 	folders.remove('images')
 	for folder in folders:
