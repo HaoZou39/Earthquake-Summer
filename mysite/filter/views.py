@@ -186,6 +186,16 @@ def deleteAlbum(request, pk):
 		query.delete() #delete database entry
 	return HttpResponseRedirect('/filter/')
 
+#This function allows users to download zip files containing images from a specific album
+def downloadAlbum(request,pk):
+	currCaseID = camera.objects.get(id=pk).caseID
+	shutil.make_archive('filter/static/'+str(currCaseID),'zip','filter/static/images/'+str(currCaseID))
+	
+	response = HttpResponse()
+	response['Content-Disposition'] = 'attachment; filename=%s' % str('filter/static/'+str(currCaseID) + '.zip')
+	response['X-Sendfile'] = 'filter/static/'+str(currCaseID) + '.zip'
+	return response #HttpResponseRedirect('/filter/'+str(currCaseID))
+
 #This function creates a new database entry, gets its id, and then deletes it.
 #This is only done in order to get the latest primary key in the database
 def getLatestID():

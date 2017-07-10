@@ -12,6 +12,7 @@ urlpatterns = [
 	url(r'^(?P<pk>\d+)/delete$', filter_views.deleteImage, name='deleteImage'),
 	url(r'^(?P<caseID>\w+)$',filter_views.caseIDView,name='caseIDView'),
 	url(r'^(?P<pk>\d+)/deleteAlbum$',filter_views.deleteAlbum,name='deleteAlbum'),
+	url(r'^(?P<pk>\d+)/downloadAlbum$',filter_views.downloadAlbum,name='downloadAlbum'),
 ]
 #DetailView.as_view(model=camera,template_name="filterEdit.html")),
  
