@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from filter.models import camera
 from .forms import editForm, newForm, uploadCSVForm
 from datetime import datetime
-import os, zipfile, csv, shutil
+import os, zipfile, csv, shutil, io
 
 #This function helps filter the database according to given constraints
 def filter(request):
@@ -189,12 +189,22 @@ def deleteAlbum(request, pk):
 #This function allows users to download zip files containing images from a specific album
 def downloadAlbum(request,pk):
 	currCaseID = camera.objects.get(id=pk).caseID
-	shutil.make_archive('filter/static/'+str(currCaseID),'zip','filter/static/images/'+str(currCaseID))
+	filesToZip = []
+	for file in os.listdir('filter/static/images/'+str(currCaseID)+'/'):
+		filesToZip.append(file)
+
+	zip_subdir = 'filter/static/images/'+str(currCaseID)+'/'
+	zip_filename = '%s.zip' % str(currCaseID)
 	
-	response = HttpResponse()
-	response['Content-Disposition'] = 'attachment; filename=%s' % str('filter/static/'+str(currCaseID) + '.zip')
-	response['X-Sendfile'] = 'filter/static/'+str(currCaseID) + '.zip'
-	return response #HttpResponseRedirect('/filter/'+str(currCaseID))
+	s = io.BytesIO()
+	zf = zipfile.ZipFile(s,'w')
+	for files in filesToZip:
+		zip_path = zip_subdir + str(files)
+		zf.write('filter/static/images/'+str(currCaseID)+'/'+str(files),str(currCaseID)+'/'+str(files))
+	zf.close()
+	resp = HttpResponse(s.getvalue(),content_type='application/x-zip-compressed')
+	resp['Content-Disposition'] = 'attachment; filename=%s' % str(currCaseID)
+	return resp
 
 #This function creates a new database entry, gets its id, and then deletes it.
 #This is only done in order to get the latest primary key in the database
